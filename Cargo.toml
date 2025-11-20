@@ -1,0 +1,32 @@
+[package]
+name = "pqc-nostd"
+version = "0.0.2"
+edition = "2021"
+license = "MIT"
+description = "PQC no_std no_alloc Kyber Dilithium embedded 100% Rust"
+repository = "https://github.com/AaronSchnacky1/pqc-nostd"
+keywords = ["pqc", "ml-kem", "ml-dsa", "no_std", "embedded"]
+categories = ["cryptography", "no-std"]
+readme = "README.md"
+authors = ["Aaron Schnacky <aaronschnacky@gmail.com>"]
+homepage = "https://www.pqc-combo.com/"
+
+[dependencies]
+zeroize = { version = "1.8", default-features = false, features = ["zeroize_derive"] }
+sha3 = { version = "0.10", default-features = false }
+
+libcrux-ml-kem = { version = "0.0.4", optional = true, default-features = false, features = ["mlkem1024"] }
+libcrux-ml-dsa = { version = "0.0.4", optional = true, default-features = false, features = ["mldsa65"] }
+
+# Const-only hex literals for CAST vectors – no allocation at all
+hex_lit = { version = "0.1", optional = true }
+
+# Integrity check dependencies
+hmac = { version = "0.12", default-features = false }
+sha2 = { version = "0.10", default-features = false }
+
+[features]
+default = []
+ml-kem = ["dep:libcrux-ml-kem"]
+ml-dsa = ["dep:libcrux-ml-dsa"]
+fips_140_3 = ["ml-kem", "ml-dsa", "dep:hex_lit"]
