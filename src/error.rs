@@ -25,6 +25,8 @@ pub enum PqcError {
     AuthenticationFailure,
     /// Software integrity check failed.
     IntegrityCheckFailure,
+    /// A Known Answer Test (KAT) failed.
+    KatFailure,
 }
 
 /// specialized Result type for PQC operations.

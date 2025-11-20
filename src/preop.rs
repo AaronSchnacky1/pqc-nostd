@@ -22,6 +22,10 @@ pub fn run_post() -> Result<()> {
     let result = (|| {
         run_hash_casts()?;
 
+        // Run Known Answer Tests (KATs)
+        #[cfg(feature = "fips_140_3")]
+        crate::kat::run_kats()?;
+
         #[cfg(feature = "ml-kem")]
         {
             let seed64 = [0x42u8; 64];

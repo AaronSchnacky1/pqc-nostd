@@ -1,0 +1,15 @@
+﻿cargo :    Compiling pqc-nostd v0.0.2 (C:\Users\aaron\OneDrive\Desktop\pqc-nostd)
+At line:1 char:1
++ cargo run --features "ml-kem,ml-dsa,fips_140_3" --bin generate_kat_va ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (   Compiling pq...ktop\pqc-nostd):String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+error[E0433]: failed to resolve: could not find `kat` in the crate root
+  --> src\preop.rs:27:16
+   |
+27 |         crate::kat::run_kats()?;
+   |                ^^^ could not find `kat` in the crate root
+
+For more information about this error, try `rustc --explain E0433`.
+error: could not compile `pqc-nostd` (lib) due to 1 previous error

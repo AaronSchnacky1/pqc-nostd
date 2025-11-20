@@ -30,3 +30,11 @@ default = []
 ml-kem = ["dep:libcrux-ml-kem"]
 ml-dsa = ["dep:libcrux-ml-dsa"]
 fips_140_3 = ["ml-kem", "ml-dsa", "dep:hex_lit"]
+
+[[bin]]
+name = "generate_kat_values"
+path = "scripts/generate_kat_values.rs"
+
+[[bin]]
+name = "update_kat_rs"
+path = "scripts/update_kat_rs.rs"
