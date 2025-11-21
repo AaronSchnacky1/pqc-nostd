@@ -6,6 +6,7 @@
 // Contact: aaronschnacky@gmail.com
 // src/csp.rs – FINAL
 use crate::error::{PqcError, Result};
+#[cfg(any(feature = "ml-kem", feature = "ml-dsa"))]
 use crate::state::check_operational;
 
 #[cfg(feature = "ml-kem")]
@@ -26,9 +27,13 @@ pub enum CspExportPolicy {
 /// Returns the current CSP export policy.
 pub fn get_csp_export_policy() -> CspExportPolicy {
     #[cfg(feature = "fips_140_3")]
-    { CspExportPolicy::BlockPlaintext }
+    {
+        CspExportPolicy::BlockPlaintext
+    }
     #[cfg(not(feature = "fips_140_3"))]
-    { CspExportPolicy::AllowPlaintext }
+    {
+        CspExportPolicy::AllowPlaintext
+    }
 }
 
 fn export_blocked() -> Result<()> {

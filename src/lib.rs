@@ -54,21 +54,15 @@
 #![deny(missing_docs)]
 #![deny(unsafe_code)]
 
-/// Error types and Result alias.
-pub mod error;
+/// Role-Based Authentication (Level 2).
+pub mod auth;
 /// Conditional Algorithm Self-Tests (CASTs).
 pub mod cast;
-/// FIPS module state management.
-pub mod state;
-/// Pair-wise Consistency Tests (PCTs).
-pub mod pct;
-/// Pre-operational self-tests (POST).
-pub mod preop;
 /// Critical Security Parameter (CSP) management.
 /// Critical Security Parameter (CSP) management.
 pub mod csp;
-/// Role-Based Authentication (Level 2).
-pub mod auth;
+/// Error types and Result alias.
+pub mod error;
 /// Software Integrity Test (Level 1/2).
 pub mod integrity;
 /// Generated integrity data (HMAC).
@@ -76,27 +70,29 @@ pub mod integrity_data;
 /// Known Answer Tests (KATs).
 #[cfg(feature = "fips_140_3")]
 pub mod kat;
+/// Pair-wise Consistency Tests (PCTs).
+pub mod pct;
+/// Pre-operational self-tests (POST).
+pub mod preop;
+/// FIPS module state management.
+pub mod state;
 
-/// ML-KEM-1024 (FIPS 203) implementation.
-#[cfg(feature = "ml-kem")]
-pub mod ml_kem;
 /// ML-DSA-65 (FIPS 204) implementation.
 #[cfg(feature = "ml-dsa")]
 pub mod ml_dsa;
+/// ML-KEM-1024 (FIPS 203) implementation.
+#[cfg(feature = "ml-kem")]
+pub mod ml_kem;
 
 // ML-KEM re-exports
 #[cfg(feature = "ml-kem")]
 pub use ml_kem::{
-    encapsulate as kyber_encapsulate_internal,
-    decapsulate as kyber_decapsulate_internal,
-    generate_key_pair as kyber_generate_key_pair_internal,
-    KyberCiphertext,
-    KyberKeypair,
-    KyberPublicKey,
-    KyberPrivateKey,
-    KyberSharedSecret,
+    decapsulate as kyber_decapsulate_internal, encapsulate as kyber_encapsulate_internal,
+    generate_key_pair as kyber_generate_key_pair_internal, KyberCiphertext, KyberKeypair,
+    KyberPrivateKey, KyberPublicKey, KyberSharedSecret,
 };
 
+#[cfg(any(feature = "ml-kem", feature = "ml-dsa"))]
 use auth::{check_authority, Role};
 
 /// Generates a Kyber key pair (Authenticated).
@@ -108,7 +104,10 @@ pub fn kyber_generate_key_pair(seed: [u8; 64]) -> Result<KyberKeypair> {
 
 /// Encapsulates a shared secret (Authenticated).
 #[cfg(feature = "ml-kem")]
-pub fn encapsulate(pk: &KyberPublicKey, randomness: [u8; 32]) -> Result<(KyberCiphertext, KyberSharedSecret)> {
+pub fn encapsulate(
+    pk: &KyberPublicKey,
+    randomness: [u8; 32],
+) -> Result<(KyberCiphertext, KyberSharedSecret)> {
     check_authority(Role::User)?;
     Ok(kyber_encapsulate_internal(pk, randomness))
 }
@@ -123,14 +122,9 @@ pub fn decapsulate(sk: &KyberPrivateKey, ct: &KyberCiphertext) -> Result<KyberSh
 // ML-DSA re-exports
 #[cfg(feature = "ml-dsa")]
 pub use ml_dsa::{
-    generate_key_pair as dilithium_generate_key_pair_internal,
-    sign as dilithium_sign_internal,
-    verify as dilithium_verify_internal,
-    DilithiumSigningKey,
-    DilithiumVerifyingKey,
-    DilithiumSignature,
-    DilithiumKeypair,
-    FIPS_CONTEXT,
+    generate_key_pair as dilithium_generate_key_pair_internal, sign as dilithium_sign_internal,
+    verify as dilithium_verify_internal, DilithiumKeypair, DilithiumSignature, DilithiumSigningKey,
+    DilithiumVerifyingKey, FIPS_CONTEXT,
 };
 
 /// Generates a Dilithium key pair (Authenticated).
@@ -142,14 +136,25 @@ pub fn dilithium_generate_key_pair(seed: [u8; 32]) -> Result<DilithiumKeypair> {
 
 /// Signs a message (Authenticated).
 #[cfg(feature = "ml-dsa")]
-pub fn dilithium_sign(sk: &DilithiumSigningKey, msg: &[u8], ctx: &[u8], randomness: [u8; 32]) -> Result<DilithiumSignature> {
+pub fn dilithium_sign(
+    sk: &DilithiumSigningKey,
+    msg: &[u8],
+    ctx: &[u8],
+    randomness: [u8; 32],
+) -> Result<DilithiumSignature> {
     check_authority(Role::User)?;
-    dilithium_sign_internal(sk, msg, ctx, randomness).map_err(|_| PqcError::FipsErrorState) // Map libcrux error if any
+    dilithium_sign_internal(sk, msg, ctx, randomness).map_err(|_| PqcError::FipsErrorState)
+    // Map libcrux error if any
 }
 
 /// Verifies a signature (Authenticated).
 #[cfg(feature = "ml-dsa")]
-pub fn dilithium_verify(pk: &DilithiumVerifyingKey, msg: &[u8], ctx: &[u8], sig: &DilithiumSignature) -> Result<()> {
+pub fn dilithium_verify(
+    pk: &DilithiumVerifyingKey,
+    msg: &[u8],
+    ctx: &[u8],
+    sig: &DilithiumSignature,
+) -> Result<()> {
     check_authority(Role::User)?;
     dilithium_verify_internal(pk, msg, ctx, sig).map_err(|_| PqcError::FipsErrorState)
 }
@@ -171,9 +176,14 @@ pub const ML_DSA_65_SK_BYTES: usize = 4032;
 pub const ML_DSA_65_SIG_BYTES: usize = 3309;
 
 pub use error::{PqcError, Result};
-pub use state::{get_fips_state, is_operational, FipsState};
+
+#[cfg(feature = "ml-kem")]
+pub use pct::kyber_pct;
+#[cfg(feature = "ml-dsa")]
+pub use pct::dilithium_pct;
+
 pub use preop::{run_post, run_post_or_panic};
-pub use pct::{kyber_pct, dilithium_pct};
+pub use state::{get_fips_state, is_operational, FipsState};
 
 // CSP aliases – only one definition each
 #[cfg(feature = "ml-kem")]

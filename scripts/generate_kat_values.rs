@@ -2,9 +2,8 @@
 // Helper program to generate KAT golden values in chunks for easy copying
 
 use pqc_nostd::{
-    kyber_generate_key_pair_internal, kyber_encapsulate_internal,
-    dilithium_generate_key_pair_internal, dilithium_sign_internal,
-    FIPS_CONTEXT,
+    dilithium_generate_key_pair_internal, dilithium_sign_internal, kyber_encapsulate_internal,
+    kyber_generate_key_pair_internal, FIPS_CONTEXT,
 };
 
 fn main() {
@@ -22,7 +21,7 @@ fn main() {
     // 1. Generate ML-KEM key pair
     let ml_kem_seed = [0xAAu8; 64];
     let ml_kem_kp = kyber_generate_key_pair_internal(ml_kem_seed);
-    
+
     println!("// ML-KEM-1024 Public Key already exists in kat.rs (lines 47-146)");
     println!("// ML-KEM-1024 Private Key already exists in kat.rs (lines 149-357)");
     println!();
@@ -92,7 +91,7 @@ fn main() {
 /// Prints bytes in hex format, split into the specified number of chunks
 fn print_bytes_in_chunks(data: &[u8], num_chunks: usize, indent: &str) {
     let chunk_size = data.len().div_ceil(num_chunks); // Round up
-    
+
     for (chunk_idx, chunk) in data.chunks(chunk_size).enumerate() {
         print!("{}", indent);
         for (i, byte) in chunk.iter().enumerate() {

@@ -30,17 +30,17 @@ pub unsafe fn integrity_check(
     expected_hmac: &[u8],
 ) -> Result<()> {
     let code_slice = core::slice::from_raw_parts(code_start, code_len);
-    
+
     // Key for HMAC-SHA-256 Integrity Test
     // In a real module, this key would be embedded or derived securely.
     // For this demonstration, we use a hardcoded key.
     let integrity_key = b"FIPS_140_3_INTEGRITY_KEY";
 
-    let mut mac = HmacSha256::new_from_slice(integrity_key)
-        .map_err(|_| PqcError::IntegrityCheckFailure)?;
-    
+    let mut mac =
+        HmacSha256::new_from_slice(integrity_key).map_err(|_| PqcError::IntegrityCheckFailure)?;
+
     mac.update(code_slice);
-    
+
     if mac.verify_slice(expected_hmac).is_ok() {
         Ok(())
     } else {

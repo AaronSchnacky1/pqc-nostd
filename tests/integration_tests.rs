@@ -2,13 +2,19 @@
 // Minimal integration test required for FIPS 140-3 submission
 // Proves: POST passes → module enters Operational → approved algorithms work
 
-use pqc_nostd::{run_post_or_panic, is_operational, kyber_generate_key_pair, dilithium_generate_key_pair, FIPS_CONTEXT};
 use pqc_nostd::auth::{login, Role};
+use pqc_nostd::{
+    dilithium_generate_key_pair, is_operational, kyber_generate_key_pair, run_post_or_panic,
+    FIPS_CONTEXT,
+};
 
 #[test]
 fn fips_module_becomes_operational_and_algorithms_work() {
-    run_post_or_panic();                    // Executes CASTs + PCTs
-    assert!(is_operational(), "Module must be in Operational state after POST");
+    run_post_or_panic(); // Executes CASTs + PCTs
+    assert!(
+        is_operational(),
+        "Module must be in Operational state after POST"
+    );
 
     // Level 2: Must login before operations
     login(Role::User, b"user123").expect("Login failed");
@@ -22,6 +28,7 @@ fn fips_module_becomes_operational_and_algorithms_work() {
     // ML-DSA-65 sign/verify (fixed seeds – deterministic)
     let dil_kp = dilithium_generate_key_pair([0x33u8; 32]).unwrap();
     let msg = b"FIPS 140-3 approved mode test";
-    let sig = pqc_nostd::dilithium_sign(&dil_kp.signing_key, msg, FIPS_CONTEXT, [0x44u8; 32]).unwrap();
+    let sig =
+        pqc_nostd::dilithium_sign(&dil_kp.signing_key, msg, FIPS_CONTEXT, [0x44u8; 32]).unwrap();
     assert!(pqc_nostd::dilithium_verify(&dil_kp.verification_key, msg, FIPS_CONTEXT, &sig).is_ok());
 }

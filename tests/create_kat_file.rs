@@ -5,9 +5,8 @@
 #[cfg(all(feature = "ml-kem", feature = "ml-dsa", feature = "fips_140_3"))]
 mod create_kat_file {
     use pqc_nostd::{
-        kyber_generate_key_pair_internal, kyber_encapsulate_internal,
-        dilithium_generate_key_pair_internal, dilithium_sign_internal,
-        FIPS_CONTEXT,
+        dilithium_generate_key_pair_internal, dilithium_sign_internal, kyber_encapsulate_internal,
+        kyber_generate_key_pair_internal, FIPS_CONTEXT,
     };
 
     #[test]
@@ -22,17 +21,28 @@ mod create_kat_file {
         let ml_dsa_kp = dilithium_generate_key_pair_internal(ml_dsa_seed);
         let msg = b"FIPS 140-3 KAT";
         let ml_dsa_randomness = [0xDDu8; 32];
-        let sig = dilithium_sign_internal(&ml_dsa_kp.signing_key, msg, FIPS_CONTEXT, ml_dsa_randomness)
-            .expect("Signing failed");
+        let sig =
+            dilithium_sign_internal(&ml_dsa_kp.signing_key, msg, FIPS_CONTEXT, ml_dsa_randomness)
+                .expect("Signing failed");
 
         // Print complete file
         print_file_header();
-        print_ml_kem_kat(ml_kem_kp.public_key().as_ref(), ml_kem_kp.private_key().as_ref(), ct.as_ref(), &ss);
-        print_ml_dsa_kat(ml_dsa_kp.verification_key.as_ref(), ml_dsa_kp.signing_key.as_ref(), sig.as_ref());
+        print_ml_kem_kat(
+            ml_kem_kp.public_key().as_ref(),
+            ml_kem_kp.private_key().as_ref(),
+            ct.as_ref(),
+            &ss,
+        );
+        print_ml_dsa_kat(
+            ml_dsa_kp.verification_key.as_ref(),
+            ml_dsa_kp.signing_key.as_ref(),
+            sig.as_ref(),
+        );
     }
 
     fn print_file_header() {
-        println!(r#"// ------------------------------------------------------------------------
+        println!(
+            r#"// ------------------------------------------------------------------------
 // PQC-COMBO v0.2.0
 // ------------------------------------------------------------------------
 // Copyright © 2025 Aaron Schnacky. All rights reserved.
@@ -76,7 +86,8 @@ fn ml_kem_kat() -> Result<()> {{
     let seed = [0xAAu8; 64]; // Fixed seed
     let kp = kyber_generate_key_pair_internal(seed);
 
-    // Expected Public Key"#);
+    // Expected Public Key"#
+        );
     }
 
     fn print_ml_kem_kat(pk: &[u8], sk: &[u8], ct: &[u8], ss: &[u8]) {
@@ -89,7 +100,8 @@ fn ml_kem_kat() -> Result<()> {{
         print_hex_array(sk);
         println!("    ];");
         println!();
-        println!(r#"    if kp.public_key().as_ref() != &expected_pk[..] {{
+        println!(
+            r#"    if kp.public_key().as_ref() != &expected_pk[..] {{
         return Err(PqcError::KatFailure);
     }}
     if kp.private_key().as_ref() != &expected_sk[..] {{
@@ -100,7 +112,8 @@ fn ml_kem_kat() -> Result<()> {{
     let randomness = [0xBBu8; 32]; // Fixed randomness
     let (ct, ss) = kyber_encapsulate_internal(&kp.public_key(), randomness);
 
-    // Expected Ciphertext"#);
+    // Expected Ciphertext"#
+        );
         println!("    let expected_ct: [u8; ML_KEM_1024_CT_BYTES] = [");
         print_hex_array(ct);
         println!("    ];");
@@ -110,7 +123,8 @@ fn ml_kem_kat() -> Result<()> {{
         print_hex_array(ss);
         println!("    ];");
         println!();
-        println!(r#"    if ct.as_ref() != &expected_ct[..] {{
+        println!(
+            r#"    if ct.as_ref() != &expected_ct[..] {{
         return Err(PqcError::KatFailure);
     }}
     if ss != &expected_ss[..] {{
@@ -132,7 +146,8 @@ fn ml_dsa_kat() -> Result<()> {{
     let seed = [0xCCu8; 32]; // Fixed seed
     let kp = dilithium_generate_key_pair_internal(seed);
 
-    // Expected Verifying Key"#);
+    // Expected Verifying Key"#
+        );
     }
 
     fn print_ml_dsa_kat(vk: &[u8], sk: &[u8], sig: &[u8]) {
@@ -145,7 +160,8 @@ fn ml_dsa_kat() -> Result<()> {{
         print_hex_array(sk);
         println!("    ];");
         println!();
-        println!(r#"    if kp.verification_key.as_ref() != &expected_vk[..] {{
+        println!(
+            r#"    if kp.verification_key.as_ref() != &expected_vk[..] {{
         return Err(PqcError::KatFailure);
     }}
     if kp.signing_key.as_ref() != &expected_sk[..] {{
@@ -158,12 +174,14 @@ fn ml_dsa_kat() -> Result<()> {{
     let sig = dilithium_sign_internal(&kp.signing_key, msg, FIPS_CONTEXT, randomness)
         .map_err(|_| PqcError::KatFailure)?;
 
-    // Expected Signature"#);
+    // Expected Signature"#
+        );
         println!("    let expected_sig: [u8; ML_DSA_65_SIG_BYTES] = [");
         print_hex_array(sig);
         println!("    ];");
         println!();
-        println!(r#"    if sig.as_ref() != &expected_sig[..] {{
+        println!(
+            r#"    if sig.as_ref() != &expected_sig[..] {{
         return Err(PqcError::KatFailure);
     }}
 
@@ -172,7 +190,8 @@ fn ml_dsa_kat() -> Result<()> {{
         .map_err(|_| PqcError::KatFailure)?;
 
     Ok(())
-}}"#);
+}}"#
+        );
     }
 
     fn print_hex_array(data: &[u8]) {

@@ -30,7 +30,7 @@ enum AuthState {
 static AUTH_STATE: AtomicU8 = AtomicU8::new(AuthState::LoggedOut as u8);
 
 /// Logs in with the specified role and password.
-/// 
+///
 /// **Note:** In a real module, passwords would be hashed and compared against stored hashes.
 /// For this demonstration, we use simple hardcoded checks.
 pub fn login(role: Role, password: &[u8]) -> Result<()> {
@@ -67,7 +67,7 @@ pub fn logout() {
 pub fn check_authority(required_role: Role) -> Result<()> {
     let current = AUTH_STATE.load(Ordering::Acquire);
     match (required_role, current) {
-        (Role::User, 1) => Ok(()), // User is logged in
+        (Role::User, 1) => Ok(()),          // User is logged in
         (Role::CryptoOfficer, 2) => Ok(()), // CO is logged in
         _ => Err(PqcError::AuthenticationFailure),
     }

@@ -5,15 +5,16 @@
 // License: MIT (publicly auditable for FIPS/CMVP verification)
 // Contact: aaronschnacky@gmail.com
 // src/preop.rs – FINAL
-use crate::error::Result;
+#[cfg(feature = "fips_140_3")]
 use crate::cast::run_hash_casts;
-use crate::state::{enter_post_state, enter_operational_state, enter_error_state};
+use crate::error::Result;
+use crate::state::{enter_error_state, enter_operational_state, enter_post_state};
 
 #[cfg(feature = "ml-kem")]
-use crate::{kyber_generate_key_pair_internal, KyberKeypair, kyber_pct};
+use crate::{kyber_generate_key_pair_internal, kyber_pct, KyberKeypair};
 
 #[cfg(feature = "ml-dsa")]
-use crate::{dilithium_generate_key_pair_internal, DilithiumKeypair, dilithium_pct};
+use crate::{dilithium_generate_key_pair_internal, dilithium_pct, DilithiumKeypair};
 
 /// Runs the full suite of Power-On Self-Tests (POST).
 #[allow(unsafe_code)]
@@ -21,6 +22,8 @@ pub fn run_post() -> Result<()> {
     enter_post_state();
 
     let result = (|| {
+        // Run hash CASTs
+        #[cfg(feature = "fips_140_3")]
         run_hash_casts()?;
 
         // Run Known Answer Tests (KATs)
@@ -44,7 +47,7 @@ pub fn run_post() -> Result<()> {
         // Run Software Integrity Test
         #[cfg(feature = "fips_140_3")]
         {
-            use crate::integrity::{integrity_check, get_code_segment};
+            use crate::integrity::{get_code_segment, integrity_check};
             use crate::integrity_data::EXPECTED_HMAC;
 
             // Skip integrity check if HMAC is still the placeholder (e.g., during testing)
@@ -52,8 +55,9 @@ pub fn run_post() -> Result<()> {
             if EXPECTED_HMAC != PLACEHOLDER {
                 // Note: In a real embedded system, we might panic here if detection fails,
                 // but returning an error transitions to the Error state which is correct.
-                let (code_start, code_len) = get_code_segment().map_err(|_| crate::error::PqcError::PlatformError)?;
-                
+                let (code_start, code_len) =
+                    get_code_segment().map_err(|_| crate::error::PqcError::PlatformError)?;
+
                 // Safety: get_code_segment returns valid boundaries for the running executable.
                 unsafe {
                     integrity_check(code_start, code_len, &EXPECTED_HMAC)?;
@@ -65,8 +69,14 @@ pub fn run_post() -> Result<()> {
     })();
 
     match result {
-        Ok(()) => { enter_operational_state(); Ok(()) }
-        Err(e) => { enter_error_state(); Err(e) }
+        Ok(()) => {
+            enter_operational_state();
+            Ok(())
+        }
+        Err(e) => {
+            enter_error_state();
+            Err(e)
+        }
     }
 }
 

@@ -8,18 +8,12 @@
 // libcrux-ml-dsa 0.0.4 exact API
 
 #[cfg(feature = "ml-dsa")]
-pub use libcrux_ml_dsa::ml_dsa_65::portable::{
-    generate_key_pair,
-    sign,
-    verify,
-};
+pub use libcrux_ml_dsa::ml_dsa_65::portable::{generate_key_pair, sign, verify};
 
 #[cfg(feature = "ml-dsa")]
 pub use libcrux_ml_dsa::ml_dsa_65::{
-    MLDSA65SigningKey as DilithiumSigningKey,
-    MLDSA65VerificationKey as DilithiumVerifyingKey,
-    MLDSA65Signature as DilithiumSignature,
-    MLDSA65KeyPair as DilithiumKeypair,
+    MLDSA65KeyPair as DilithiumKeypair, MLDSA65Signature as DilithiumSignature,
+    MLDSA65SigningKey as DilithiumSigningKey, MLDSA65VerificationKey as DilithiumVerifyingKey,
 };
 
 /// Context string for FIPS 140-3 operations (empty for pure ML-DSA).
