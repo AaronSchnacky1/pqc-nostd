@@ -1,6 +1,6 @@
 [package]
 name = "pqc-nostd"
-version = "0.0.2"
+version = "0.1.0"
 edition = "2021"
 license = "MIT"
 description = "PQC no_std no_alloc Kyber Dilithium embedded 100% Rust"
@@ -38,3 +38,14 @@ path = "scripts/generate_kat_values.rs"
 [[bin]]
 name = "update_kat_rs"
 path = "scripts/update_kat_rs.rs"
+
+[[bin]]
+name = "inject_hmac"
+path = "scripts/inject_hmac.rs"
+
+[dev-dependencies]
+criterion = { version = "0.5", features = ["html_reports"] }
+
+[[bench]]
+name = "crypto_benchmarks"
+harness = false

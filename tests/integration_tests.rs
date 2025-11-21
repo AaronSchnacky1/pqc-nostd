@@ -15,8 +15,8 @@ fn fips_module_becomes_operational_and_algorithms_work() {
 
     // ML-KEM-1024 basic round-trip (fixed seeds – deterministic)
     let kyber_kp = kyber_generate_key_pair([0x11u8; 64]).unwrap();
-    let (ct, ss1) = pqc_nostd::encapsulate(&kyber_kp.public_key(), [0x22u8; 32]).unwrap();
-    let ss2 = pqc_nostd::decapsulate(&kyber_kp.private_key(), &ct).unwrap();
+    let (ct, ss1) = pqc_nostd::encapsulate(kyber_kp.public_key(), [0x22u8; 32]).unwrap();
+    let ss2 = pqc_nostd::decapsulate(kyber_kp.private_key(), &ct).unwrap();
     assert_eq!(ss1, ss2);
 
     // ML-DSA-65 sign/verify (fixed seeds – deterministic)

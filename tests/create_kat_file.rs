@@ -16,7 +16,7 @@ mod create_kat_file {
         let ml_kem_seed = [0xAAu8; 64];
         let ml_kem_kp = kyber_generate_key_pair_internal(ml_kem_seed);
         let ml_kem_randomness = [0xBBu8; 32];
-        let (ct, ss) = kyber_encapsulate_internal(&ml_kem_kp.public_key(), ml_kem_randomness);
+        let (ct, ss) = kyber_encapsulate_internal(ml_kem_kp.public_key(), ml_kem_randomness);
 
         let ml_dsa_seed = [0xCCu8; 32];
         let ml_dsa_kp = dilithium_generate_key_pair_internal(ml_dsa_seed);
@@ -185,7 +185,7 @@ fn ml_dsa_kat() -> Result<()> {{
                 println!();
             }
         }
-        if data.len() % 16 != 0 {
+        if !data.len().is_multiple_of(16) {
             println!();
         }
     }

@@ -13,26 +13,26 @@ mod generate_kat_test {
         let seed = [0xAAu8; 64];
         let kp = kyber_generate_key_pair_internal(seed);
         let randomness = [0xBBu8; 32];
-        let (ct, ss) = kyber_encapsulate_internal(&kp.public_key(), randomness);
+        let (ct, ss) = kyber_encapsulate_internal(kp.public_key(), randomness);
         
         println!("\n=== ML-KEM Ciphertext ===");
-        for (i, chunk) in ct.as_ref().chunks(16).enumerate() {
-            print!("    ");
-            for (j, byte) in chunk.iter().enumerate() {
+        for chunk in ct.as_ref().chunks(16) {
+            print!("        ");
+            for byte in chunk.iter() {
                 print!("0x{:02x}, ", byte);
             }
             println!();
         }
         
         println!("\n=== ML-KEM Shared Secret ===");
-        print!("    ");
+        print!("        ");
         for byte in ss.iter() {
             print!("0x{:02x}, ", byte);
         }
         println!();
         
         // Verify decapsulation works
-        let ss_decap = kyber_decapsulate_internal(&kp.private_key(), &ct);
+        let ss_decap = kyber_decapsulate_internal(kp.private_key(), &ct);
         assert_eq!(ss, ss_decap);
     }
 
@@ -43,7 +43,7 @@ mod generate_kat_test {
         
         println!("\n=== ML-DSA Verification Key ===");
         for chunk in kp.verification_key.as_ref().chunks(16) {
-            print!("    ");
+            print!("        ");
             for byte in chunk.iter() {
                 print!("0x{:02x}, ", byte);
             }
@@ -52,7 +52,7 @@ mod generate_kat_test {
         
         println!("\n=== ML-DSA Signing Key ===");
         for chunk in kp.signing_key.as_ref().chunks(16) {
-            print!("    ");
+            print!("        ");
             for byte in chunk.iter() {
                 print!("0x{:02x}, ", byte);
             }
@@ -66,7 +66,7 @@ mod generate_kat_test {
         
         println!("\n=== ML-DSA Signature ===");
         for chunk in sig.as_ref().chunks(16) {
-            print!("    ");
+            print!("        ");
             for byte in chunk.iter() {
                 print!("0x{:02x}, ", byte);
             }

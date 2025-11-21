@@ -355,7 +355,7 @@ fn ml_kem_kat() -> Result<()> {
 
     // 2. Encapsulate KAT
     let randomness = [0xBBu8; 32]; // Fixed randomness
-    let (ct, ss) = kyber_encapsulate_internal(&kp.public_key(), randomness);
+    let (ct, ss) = kyber_encapsulate_internal(kp.public_key(), randomness);
 
     // Expected Ciphertext
     let expected_ct: [u8; ML_KEM_1024_CT_BYTES] = [
@@ -468,13 +468,13 @@ fn ml_kem_kat() -> Result<()> {
     if ct.as_ref() != &expected_ct[..] {
         return Err(PqcError::KatFailure);
     }
-    if ss != &expected_ss[..] {
+    if ss != expected_ss[..] {
         return Err(PqcError::KatFailure);
     }
 
     // 3. Decapsulate KAT
-    let ss_decap = kyber_decapsulate_internal(&kp.private_key(), &ct);
-    if ss_decap != &expected_ss[..] {
+    let ss_decap = kyber_decapsulate_internal(kp.private_key(), &ct);
+    if ss_decap != expected_ss[..] {
         return Err(PqcError::KatFailure);
     }
 

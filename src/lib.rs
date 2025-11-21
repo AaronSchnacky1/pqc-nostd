@@ -71,6 +71,8 @@ pub mod csp;
 pub mod auth;
 /// Software Integrity Test (Level 1/2).
 pub mod integrity;
+/// Generated integrity data (HMAC).
+pub mod integrity_data;
 /// Known Answer Tests (KATs).
 #[cfg(feature = "fips_140_3")]
 pub mod kat;

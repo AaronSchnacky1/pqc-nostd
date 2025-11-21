@@ -21,7 +21,7 @@ fn generate_kat_values() {
         print_byte_array(kp.private_key().as_ref());
         
         let randomness = [0xBBu8; 32];
-        let (ct, ss) = encapsulate(&kp.public_key(), randomness).unwrap();
+        let (ct, ss) = encapsulate(kp.public_key(), randomness).unwrap();
         println!("// ML-KEM Ciphertext");
         print_byte_array(ct.as_ref());
         println!("// ML-KEM Shared Secret");

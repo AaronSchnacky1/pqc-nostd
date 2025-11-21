@@ -29,7 +29,7 @@ fn main() {
 
     // 2. Generate ML-KEM encapsulation
     let ml_kem_randomness = [0xBBu8; 32];
-    let (ct, ss) = kyber_encapsulate_internal(&ml_kem_kp.public_key(), ml_kem_randomness);
+    let (ct, ss) = kyber_encapsulate_internal(ml_kem_kp.public_key(), ml_kem_randomness);
 
     println!("// ML-KEM-1024 Ciphertext (1568 bytes) - REPLACE lines 371-374");
     println!("let expected_ct: [u8; ML_KEM_1024_CT_BYTES] = [");
@@ -91,7 +91,7 @@ fn main() {
 
 /// Prints bytes in hex format, split into the specified number of chunks
 fn print_bytes_in_chunks(data: &[u8], num_chunks: usize, indent: &str) {
-    let chunk_size = (data.len() + num_chunks - 1) / num_chunks; // Round up
+    let chunk_size = data.len().div_ceil(num_chunks); // Round up
     
     for (chunk_idx, chunk) in data.chunks(chunk_size).enumerate() {
         print!("{}", indent);
@@ -105,10 +105,6 @@ fn print_bytes_in_chunks(data: &[u8], num_chunks: usize, indent: &str) {
                 print!("\n{}", indent);
             }
         }
-        if chunk_idx < num_chunks - 1 {
-            println!();
-        } else {
-            println!();
-        }
+        println!();
     }
 }

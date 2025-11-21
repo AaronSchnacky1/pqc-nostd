@@ -5,8 +5,6 @@ use pqc_nostd::{
     kyber_generate_key_pair_internal, kyber_encapsulate_internal,
     dilithium_generate_key_pair_internal, dilithium_sign_internal,
     FIPS_CONTEXT,
-    ML_KEM_1024_PK_BYTES, ML_KEM_1024_SK_BYTES, ML_KEM_1024_CT_BYTES, ML_KEM_1024_SS_BYTES,
-    ML_DSA_65_PK_BYTES, ML_DSA_65_SK_BYTES, ML_DSA_65_SIG_BYTES,
 };
 
 fn main() {
@@ -14,7 +12,7 @@ fn main() {
     let ml_kem_seed = [0xAAu8; 64];
     let ml_kem_kp = kyber_generate_key_pair_internal(ml_kem_seed);
     let ml_kem_randomness = [0xBBu8; 32];
-    let (ct, ss) = kyber_encapsulate_internal(&ml_kem_kp.public_key(), ml_kem_randomness);
+    let (ct, ss) = kyber_encapsulate_internal(ml_kem_kp.public_key(), ml_kem_randomness);
 
     let ml_dsa_seed = [0xCCu8; 32];
     let ml_dsa_kp = dilithium_generate_key_pair_internal(ml_dsa_seed);
@@ -189,7 +187,7 @@ fn print_hex_array(data: &[u8]) {
             println!();
         }
     }
-    if data.len() % 16 != 0 {
+    if !data.len().is_multiple_of(16) {
         println!();
     }
 }

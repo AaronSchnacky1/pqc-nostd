@@ -1,4 +1,4 @@
-# pqc-nostd v0.0.2
+# pqc-nostd v0.1.0
 
 Implements only NIST-standardized and FIPS-approved algorithms:
 - ML-KEM-1024 (FIPS 203 – CRYSTALS-Kyber) – Security Level 5

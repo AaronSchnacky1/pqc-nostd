@@ -1,17 +1,28 @@
 # FIPS 140-3 Crypto Officer & User Guide
 
-**Module:** pqc-nostd v0.0.2
+**Module:** pqc-nostd v0.1.0
 
 ---
 
 ## 1. Installation & Initialization
 
 ### 1.1 Building the Module
-To build the module in FIPS Approved mode, you must enable the `fips_140_3` feature:
+To build the module in FIPS Approved mode, you must enable the `fips_140_3` feature AND run the post-build integrity injection script.
 
-```bash
-cargo build --release --features "ml-kem,ml-dsa,fips_140_3"
+**Windows (PowerShell):**
+```powershell
+.\build_fips.ps1
 ```
+
+**Manual Build (Other Platforms):**
+1. Build the binary:
+   ```bash
+   cargo build --release --features "ml-kem,ml-dsa,fips_140_3"
+   ```
+2. Inject the HMAC:
+   ```bash
+   cargo run --bin inject_hmac --features "ml-kem,ml-dsa,fips_140_3" -- <path_to_binary>
+   ```
 
 ### 1.2 Power-Up Procedures
 Upon power-up, the application **MUST** call `run_post()` or `run_post_or_panic()` immediately. No cryptographic operations are permitted until this function returns successfully.
@@ -36,7 +47,11 @@ The Crypto Officer (CO) is responsible for:
 - Managing the operational environment.
 
 ### 2.2 Integrity Check
-The CO should verify the module's integrity using the provided `integrity_check` function (if exposed) or by verifying the HMAC of the binary externally before execution.
+The module automatically performs an integrity check during `run_post()`. This check verifies the HMAC-SHA-256 of the executable code against the value injected at build time.
+- **Success**: `run_post()` returns `Ok(())`.
+- **Failure**: `run_post()` returns `Err(PqcError::IntegrityCheckFailure)`.
+
+The CO can also verify the integrity of the binary file on disk by re-running the `inject_hmac` tool, which will report the calculated HMAC.
 
 ## 3. User Guidance
 

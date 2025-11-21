@@ -27,6 +27,8 @@ pub enum PqcError {
     IntegrityCheckFailure,
     /// A Known Answer Test (KAT) failed.
     KatFailure,
+    /// Platform-specific error (e.g., code segment detection failed).
+    PlatformError,
 }
 
 /// specialized Result type for PQC operations.

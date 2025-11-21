@@ -1,7 +1,7 @@
 # FIPS 140-3 Security Policy
 
 **Module Name:** pqc-nostd
-**Module Version:** v0.0.2
+**Module Version:** v0.1.0
 **Security Level:** 2
 
 ---
@@ -66,9 +66,16 @@ The module operates in a modifiable operational environment. The operating syste
 ## 7. Self-Tests
 The module performs the following self-tests:
 - **Power-On Self-Tests (POST):**
-    - Software Integrity Test (HMAC-SHA-256).
-    - CASTs for SHA-3 and SHAKE.
-    - PCTs for ML-KEM and ML-DSA.
+    - **Software Integrity Test**: HMAC-SHA-256 of the code segment.
+    - **Known Answer Tests (KATs)**:
+        - ML-KEM-1024: Key Generation, Encapsulation, Decapsulation.
+        - ML-DSA-65: Key Generation, Signing, Verification.
+    - **Conditional Algorithm Self-Tests (CASTs)**:
+        - SHA-3-256, SHA-3-512.
+        - SHAKE128, SHAKE256.
+    - **Pair-wise Consistency Tests (PCTs)**:
+        - ML-KEM-1024 (Round-trip).
+        - ML-DSA-65 (Sign/Verify).
 - **Conditional Tests:**
     - Pair-wise Consistency Test (PCT) on every key generation.
 

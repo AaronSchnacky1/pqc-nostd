@@ -1,4 +1,4 @@
-# Security Policy – pqc-nostd v0.0.2
+# Security Policy – pqc-nostd v0.1.0
 
 ### Approved Algorithms Only
 - ML-KEM-1024 (FIPS 203) – NIST Security Level 5
