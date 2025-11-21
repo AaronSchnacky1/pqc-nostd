@@ -1,8 +1,7 @@
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 use pqc_nostd::{
-    kyber_generate_key_pair, encapsulate, decapsulate,
-    dilithium_generate_key_pair, dilithium_sign, dilithium_verify,
-    FIPS_CONTEXT,
+    decapsulate, dilithium_generate_key_pair, dilithium_sign, dilithium_verify, encapsulate,
+    kyber_generate_key_pair, FIPS_CONTEXT,
 };
 
 fn benchmark_ml_kem(c: &mut Criterion) {
@@ -24,17 +23,13 @@ fn benchmark_ml_kem(c: &mut Criterion) {
     let randomness = [0xBBu8; 32];
 
     group.bench_function("Encapsulate", |b| {
-        b.iter(|| {
-            encapsulate(black_box(kp.public_key()), black_box(randomness)).unwrap()
-        })
+        b.iter(|| encapsulate(black_box(kp.public_key()), black_box(randomness)).unwrap())
     });
 
     let (ct, _ss) = encapsulate(kp.public_key(), randomness).unwrap();
 
     group.bench_function("Decapsulate", |b| {
-        b.iter(|| {
-            decapsulate(black_box(kp.private_key()), black_box(&ct)).unwrap()
-        })
+        b.iter(|| decapsulate(black_box(kp.private_key()), black_box(&ct)).unwrap())
     });
 
     group.finish();
@@ -66,7 +61,8 @@ fn benchmark_ml_dsa(c: &mut Criterion) {
                 black_box(msg),
                 black_box(FIPS_CONTEXT),
                 black_box(randomness),
-            ).unwrap()
+            )
+            .unwrap()
         })
     });
 
@@ -79,7 +75,8 @@ fn benchmark_ml_dsa(c: &mut Criterion) {
                 black_box(msg),
                 black_box(FIPS_CONTEXT),
                 black_box(&sig),
-            ).unwrap()
+            )
+            .unwrap()
         })
     });
 
@@ -92,22 +89,27 @@ fn benchmark_self_tests(c: &mut Criterion) {
     // Benchmark individual CASTs if exposed, or just the full POST suite
     // Note: run_post includes KATs and Integrity Check now, so it might be slow.
     // We'll benchmark the full POST to give a "boot time" estimate.
-    
+
     // We need to be careful because run_post changes global state.
     // However, we can run it multiple times; it just re-runs tests.
-    
+
     group.bench_function("Full POST (Boot Time)", |b| {
         b.iter(|| {
             // We ignore the error here because integrity check might fail if not built with injection
             // But for benchmarking logic speed, it's fine.
             // Actually, if integrity check fails, it returns early.
             // Ideally we want a passing POST.
-            let _ = pqc_nostd::run_post(); 
+            let _ = pqc_nostd::run_post();
         })
     });
 
     group.finish();
 }
 
-criterion_group!(benches, benchmark_ml_kem, benchmark_ml_dsa, benchmark_self_tests);
+criterion_group!(
+    benches,
+    benchmark_ml_kem,
+    benchmark_ml_dsa,
+    benchmark_self_tests
+);
 criterion_main!(benches);

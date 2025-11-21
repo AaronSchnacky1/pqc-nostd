@@ -7,12 +7,17 @@
 // src/cast.rs
 //! FIPS 140-3 CASTs – now compiles with digest 0.10
 
+#[cfg(feature = "fips_140_3")]
 use crate::error::{PqcError, Result};
-use sha3::{Digest, Sha3_256, Sha3_512, Shake128, Shake256};
-use sha3::digest::{Update, ExtendableOutput, XofReader};  // ← critical
+#[cfg(feature = "fips_140_3")]
 use hex_lit::hex;
+#[cfg(feature = "fips_140_3")]
+use sha3::digest::{ExtendableOutput, Update, XofReader}; // ← critical
+#[cfg(feature = "fips_140_3")]
+use sha3::{Digest, Sha3_256, Sha3_512, Shake128, Shake256};
 
 /// Runs the SHA3-256 Conditional Algorithm Self-Test.
+#[cfg(feature = "fips_140_3")]
 pub fn sha3_256_cast() -> Result<()> {
     let result = Sha3_256::digest(b"");
     if result[..] != hex!("a7ffc6f8bf1ed76651c14756a061d662f580ff4de43b49fa82d80a4b80f8434a") {
@@ -23,6 +28,7 @@ pub fn sha3_256_cast() -> Result<()> {
 }
 
 /// Runs the SHA3-512 Conditional Algorithm Self-Test.
+#[cfg(feature = "fips_140_3")]
 pub fn sha3_512_cast() -> Result<()> {
     let result = Sha3_512::digest(b"");
     if result[..] != hex!("a69f73cca23a9ac5c8b567dc185a756e97c982164fe25859e0d1dcc1475c80a615b2123af1f5f94c11e3e9402c3ac558f500199d95b6d3e301758586281dcd26") {
@@ -33,6 +39,7 @@ pub fn sha3_512_cast() -> Result<()> {
 }
 
 /// Runs the SHAKE128 Conditional Algorithm Self-Test.
+#[cfg(feature = "fips_140_3")]
 pub fn shake128_cast() -> Result<()> {
     let mut h = Shake128::default();
     h.update(b"");
@@ -47,6 +54,7 @@ pub fn shake128_cast() -> Result<()> {
 }
 
 /// Runs the SHAKE256 Conditional Algorithm Self-Test.
+#[cfg(feature = "fips_140_3")]
 pub fn shake256_cast() -> Result<()> {
     let mut h = Shake256::default();
     h.update(b"");
@@ -61,6 +69,7 @@ pub fn shake256_cast() -> Result<()> {
 }
 
 /// Runs all hash-based Conditional Algorithm Self-Tests.
+#[cfg(feature = "fips_140_3")]
 pub fn run_hash_casts() -> Result<()> {
     sha3_256_cast()?;
     sha3_512_cast()?;

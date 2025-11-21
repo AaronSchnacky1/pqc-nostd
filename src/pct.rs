@@ -5,18 +5,18 @@
 // License: MIT (publicly auditable for FIPS/CMVP verification)
 // Contact: aaronschnacky@gmail.com
 // src/pct.rs – FINAL
+#[cfg(any(feature = "ml-kem", feature = "ml-dsa"))]
 use crate::error::{PqcError, Result};
 
 #[cfg(feature = "ml-kem")]
 use crate::{
-    kyber_encapsulate_internal, kyber_decapsulate_internal,
-    KyberPublicKey, KyberPrivateKey,
+    kyber_decapsulate_internal, kyber_encapsulate_internal, KyberPrivateKey, KyberPublicKey,
 };
 
 #[cfg(feature = "ml-dsa")]
 use crate::{
-    dilithium_sign_internal, dilithium_verify_internal,
-    DilithiumVerifyingKey, DilithiumSigningKey, FIPS_CONTEXT,
+    dilithium_sign_internal, dilithium_verify_internal, DilithiumSigningKey, DilithiumVerifyingKey,
+    FIPS_CONTEXT,
 };
 
 /// Runs the Pair-wise Consistency Test (PCT) for ML-KEM-1024.
