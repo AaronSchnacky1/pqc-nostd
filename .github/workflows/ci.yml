@@ -1,4 +1,4 @@
-name: Rust Tests
+name: FIPS 140-3 CI
 
 on:
   push:
@@ -8,6 +8,7 @@ on:
 
 jobs:
   test:
+    name: Test Suite
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -19,8 +20,37 @@ jobs:
     - name: Run tests (no default features)
       run: cargo test --no-default-features
 
-    - name: Run tests (with alloc feature)
-      run: cargo test --no-default-features --features alloc
+    - name: Run tests (ML-KEM only)
+      run: cargo test --no-default-features --features ml-kem
 
-    - name: Run tests (with alloc and aes-gcm features)
-      run: cargo test --no-default-features --features "alloc,aes-gcm"
+    - name: Run tests (ML-DSA only)
+      run: cargo test --no-default-features --features ml-dsa
+
+    - name: Run tests (FIPS 140-3 mode)
+      run: cargo test --features fips_140_3
+
+  lint:
+    name: Linting
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: dtolnay/rust-toolchain@stable
+      with:
+        toolchain: stable
+        components: clippy
+
+    - name: Run clippy
+      run: cargo clippy --features fips_140_3 -- -D warnings
+
+  format:
+    name: Formatting
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: dtolnay/rust-toolchain@stable
+      with:
+        toolchain: stable
+        components: rustfmt
+
+    - name: Check formatting
+      run: cargo fmt -- --check
