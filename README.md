@@ -1,4 +1,11 @@
+
 # pqc-nostd v0.1.0
+
+[![FIPS 140-3 CI](https://github.com/aaronschnacky1/pqc-nostd/actions/workflows/ci.yml/badge.svg)](https://github.com/aaronschnacky1/pqc-nostd/actions/workflows/ci.yml)
+![Pure Rust](https://img.shields.io/badge/100%25-Rust-orange)
+![no_std](https://img.shields.io/badge/no__std-Ready-green)
+[![Crates.io](https://img.shields.io/crates/v/pqc-nostd.svg)](https://crates.io/crates/pqc-nostd)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 Implements only NIST-standardized and FIPS-approved algorithms:
 - ML-KEM-1024 (FIPS 203 – CRYSTALS-Kyber) – Security Level 5
